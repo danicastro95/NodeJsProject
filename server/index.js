@@ -7,7 +7,6 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-    console.log("conectado");
     var nick;
     socket.on('disconnect', function () {
         socket.broadcast.emit('left', nick);

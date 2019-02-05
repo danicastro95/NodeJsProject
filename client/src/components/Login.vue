@@ -8,14 +8,9 @@
 <script>
 export default {
   name: "Login",
-  data() {
-    return {
-      logged: false
-    };
-  },
   methods: {
     log: function() {
-      this.logged = true;
+      this.$emit('log');
     }
   }
 };

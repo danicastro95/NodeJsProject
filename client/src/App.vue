@@ -1,12 +1,12 @@
 <template>
   <div id="app">
     <h1 class="text-white">Proyecto Vue.js - Daniel Castro Moreno</h1>
-    <div class="text-white" id="nav" v-if="logged">
+    <div class="text-white" id="nav" v-if="l">
       <router-link class="text-white" to="/">Notas</router-link>|
       <router-link class="text-success" to="/weather">Tiempo</router-link>
       <router-view/>
     </div>
-    <Login v-else></Login>
+    <Login v-else @log="logged"></Login>
     <footer id="foot">
       <Footer></Footer>
     </footer>
@@ -19,13 +19,18 @@ import Footer from "@/components/Footer.vue";
 
 export default {
   name: "app",
+  data() {
+    return {
+      l: false
+    };
+  },
   components: {
     Login,
     Footer
   },
-  computed: {
+  methods: {
     logged() {
-      return this.Login.logged;
+      this.l = !this.l;
     }
   }
 };
