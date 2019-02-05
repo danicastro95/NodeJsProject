@@ -146,7 +146,8 @@ export default {
         priority: 2,
         time: date.toISOString(),
         done: false,
-        noteId: date.valueOf()
+        noteId: date.valueOf(),
+        creator: nick
       };
       this.notes.unshift(note);
       event.target.value = "";
