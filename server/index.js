@@ -11,7 +11,6 @@ var notes = new Array();
 
 io.on('connection', function (socket) {
     var nick;
-
     //Enviar notas al cliente
     socket.on('disconnect', function () {
         users.splice(users.indexOf(nick), 1);
@@ -44,14 +43,6 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('pri', [data[0], data[1]]);
     });
 
-    socket.on('mensaje', function (msg) {
-        io.emit('mensaje', msg);
-    });
-
-    socket.on('typing', function (msg) {
-        socket.broadcast.emit('typing', msg);
-    });
-
     socket.on('login', function (msg) {
         nick = msg;
         if (users.includes(nick)) {
@@ -59,6 +50,7 @@ io.on('connection', function (socket) {
         } else {
             users.push(nick);
             socket.emit('log', true);
+            socket.emit('notes', notes);
         }
     });
 });

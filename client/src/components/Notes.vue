@@ -150,7 +150,12 @@ export default {
       });
       this.sortNotes();
     },
-    do(data) {}
+    do(data) {},
+    notes(data) {
+      console.log("s");
+      this.notes = data;
+      sortNotes();
+    }
   },
   methods: {
     sortNotes() {
@@ -199,7 +204,6 @@ export default {
         }
       });
       this.notes = aux;
-      this.updateLocalStorage();
     }
   },
   computed: {
@@ -212,13 +216,6 @@ export default {
     },
     added: function(note) {
       return note.time;
-    }
-  },
-  mounted() {
-    var notes = JSON.parse(localStorage.getItem("notes"));
-    if (notes) {
-      this.notes = notes;
-      this.sortNotes();
     }
   }
 };
