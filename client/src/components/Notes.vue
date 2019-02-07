@@ -62,7 +62,7 @@
                 <!-- Proridad -->
                 <span class>Prioridad:</span>
                 <!-- Radio Group -->
-                <div class="radio-group" @change="updateLocalStorage()">
+                <div class="radio-group">
                   <!-- Baja -->
                   <input
                     class="lowPr priority"
@@ -71,6 +71,7 @@
                     :name="note.noteId"
                     v-model="note.priority"
                     v-bind:value="3"
+                    @change="changePriority(note)"
                   >
                   <label :for="'low' + note.noteId">Baja</label>
 
@@ -82,6 +83,7 @@
                     :name="note.noteId"
                     v-model="note.priority"
                     v-bind:value="2"
+                    @change="changePriority(note)"
                   >
                   <label :for="'mid' + note.noteId">Media</label>
 
@@ -93,16 +95,19 @@
                     :name="note.noteId"
                     v-model="note.priority"
                     v-bind:value="1"
+                    @change="changePriority(note)"
                   >
                   <label :for="'hi' + note.noteId">Alta</label>
                 </div>
                 <img class="smallIcon align-middle" src="@/assets/time.png">
-                A&ntilde;adida hace {{ note.time | moment("from", "now", true) }}
+                A&ntilde;adida por&nbsp;
+                <span class="text-warning">{{note.creator}}</span>
+                &nbsp;hace {{ note.time | moment("from", "now", true) }}
               </div>
             </div>
             <!-- Delete button -->
             <div class="col">
-              <b-button class="btn-danger float-right" @click="deleteNote(note)">
+              <b-button class="btn-danger float-right" @click="deleteNote(note.noteId)">
                 <img src="@/assets/remove.png">
               </b-button>
             </div>
@@ -122,12 +127,32 @@ export default {
       notes: []
     };
   },
-  methods: {
-    updateLocalStorage: function() {
-      this.sortNotes();
-      localStorage.removeItem("notes");
-      localStorage.setItem("notes", JSON.stringify(this.notes));
+  sockets: {
+    new(data) {
+      this.notes.unshift(data);
     },
+    del(data) {
+      let i = 0;
+      this.notes.forEach(n => {
+        if (data == n.noteId) {
+          this.notes.splice(i, 1);
+        }
+        i++;
+      });
+    },
+    pri(data) {
+      let i = 0;
+      this.notes.forEach(n => {
+        if (data[0] == n.noteId) {
+          n.priority = data[1];
+        }
+        i++;
+      });
+      this.sortNotes();
+    },
+    do(data) {}
+  },
+  methods: {
     sortNotes() {
       this.notes.sort(function(a, b) {
         if (a.priority > b.priority) {
@@ -147,21 +172,25 @@ export default {
         time: date.toISOString(),
         done: false,
         noteId: date.valueOf(),
-        creator: nick
+        creator: "ti"
       };
+      this.$socket.emit("newNote", note);
       this.notes.unshift(note);
       event.target.value = "";
-      localStorage.setItem("notes", JSON.stringify(this.notes));
     },
-    deleteNote: function(note) {
+    deleteNote: function(id) {
+      this.$socket.emit("delNote", id);
       let i = 0;
       this.notes.forEach(n => {
-        if (note.noteId == n.noteId) {
+        if (id == n.noteId) {
           this.notes.splice(i, 1);
         }
         i++;
       });
-      this.updateLocalStorage();
+    },
+    changePriority(note) {
+      this.$socket.emit("changePri", [note.noteId, note.priority]);
+      this.sortNotes();
     },
     deleteCompleted: function() {
       let aux = this.notes.filter(function(note) {

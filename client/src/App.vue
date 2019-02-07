@@ -2,7 +2,7 @@
   <div id="app">
     <h1 class="text-white">Proyecto Vue.js - Daniel Castro Moreno</h1>
     <div class="text-white" id="nav" v-if="l">
-      <router-link class="text-white" to="/">Notas</router-link>|
+      <router-link class="text-white" to="/">Notas</router-link>&nbsp;|
       <router-link class="text-success" to="/weather">Tiempo</router-link>
       <router-view/>
     </div>
@@ -21,7 +21,8 @@ export default {
   name: "app",
   data() {
     return {
-      l: false
+      l: false,
+      nick: ''
     };
   },
   components: {
@@ -29,8 +30,9 @@ export default {
     Footer
   },
   methods: {
-    logged() {
+    logged(msg) {
       this.l = !this.l;
+      this.nick = msg;
     }
   }
 };
