@@ -42,12 +42,12 @@
                     class="check"
                     v-if="note.done"
                     src="@/assets/check.png"
-                    @click="note.done = !note.done; updateLocalStorage()"
+                    @click="completeNote(note)"
                   >
                   <img
                     class="check"
                     src="@/assets/uncheck.png"
-                    @click="note.done = !note.done; updateLocalStorage()"
+                    @click="completeNote(note)"
                     v-else
                   >
                 </div>
@@ -127,10 +127,14 @@ export default {
       notes: []
     };
   },
+
   sockets: {
+    // Nueva nota
     new(data) {
       this.notes.unshift(data);
     },
+
+    // Nota eliminada
     del(data) {
       let i = 0;
       this.notes.forEach(n => {
@@ -140,24 +144,35 @@ export default {
         i++;
       });
     },
+
+    // Cambio de prioridad
     pri(data) {
-      let i = 0;
       this.notes.forEach(n => {
         if (data[0] == n.noteId) {
           n.priority = data[1];
         }
-        i++;
       });
       this.sortNotes();
     },
-    do(data) {},
+
+    // Nota completada
+    do(data) {
+      this.notes.forEach(n => {
+        if (data == n.noteId) {
+          n.done = !n.done;
+        }
+      });
+      this.sortNotes();
+    },
+
+    // Obtener notas del servidor
     notes(data) {
-      console.log("s");
       this.notes = data;
-      sortNotes();
+      this.sortNotes();
     }
   },
   methods: {
+    // Ordenar notas por prioridad
     sortNotes() {
       this.notes.sort(function(a, b) {
         if (a.priority > b.priority) {
@@ -169,6 +184,8 @@ export default {
         return 0;
       });
     },
+
+    // Crear nota
     addNote: function(event) {
       let date = new Date();
       let note = {
@@ -179,12 +196,13 @@ export default {
         noteId: date.valueOf(),
         creator: "ti"
       };
-      this.$socket.emit("newNote", note);
       this.notes.unshift(note);
       event.target.value = "";
+      this.$socket.emit("newNote", note);
     },
+
+    // Eliminar nota
     deleteNote: function(id) {
-      this.$socket.emit("delNote", id);
       let i = 0;
       this.notes.forEach(n => {
         if (id == n.noteId) {
@@ -192,18 +210,33 @@ export default {
         }
         i++;
       });
+      this.$socket.emit("delNote", id);
     },
+
+    // Cambio de prioridad
     changePriority(note) {
       this.$socket.emit("changePri", [note.noteId, note.priority]);
       this.sortNotes();
     },
+
+    // Completar nota
+    completeNote(note) {
+      note.done = !note.done;
+      this.$socket.emit("comNote", note.noteId);
+    },
+
+    // Eliminar completadas
     deleteCompleted: function() {
+      let context = this;
       let aux = this.notes.filter(function(note) {
         if (!note.done) {
           return note;
+        } else {
+          context.$socket.emit("delNote", note.noteId);
         }
       });
       this.notes = aux;
+      this.sortNotes();
     }
   },
   computed: {
