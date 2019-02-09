@@ -16,7 +16,6 @@ const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImage
 Vue.use(BootstrapVue);
 
 Vue.use(new VueSocketIO({
-  debug: true,
   connection: 'localhost:3000'
 }));
 

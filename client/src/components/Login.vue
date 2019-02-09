@@ -3,13 +3,7 @@
     <div class="form-group col-4"></div>
     <div class="col">
       <label for="loginInput">Introduce un apodo</label>
-      <input
-        type="text"
-        class="form-control"
-        id="loginInput"
-        pattern="^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$"
-        v-model="nick"
-      >
+      <input type="text" class="form-control" id="loginInput" v-model="nick">
       <button type="button" class="btn btn-primary" @click="log">Acceder</button>
     </div>
     <div class="form-group col-4"></div>
@@ -28,12 +22,23 @@ export default {
     log(data) {
       if (data) {
         this.$emit("log", this.nick);
+      } else if(!data) {
+        alert("Este nick está en uso actualmente, por favor elige otro");
       }
     }
   },
   methods: {
-    log: function() {
-      this.$socket.emit("login", this.nick);
+    log: function(e) {
+      let exp = new RegExp("^$");
+      if (/^$/.test(this.nick)) {
+        alert("El campo no puede estar vacío");
+      } else if (/\W/.test(this.nick)) {
+        alert(
+          "El apodo solamente puede componerse de letras y números, sin signos de puntuación o espacios"
+        );
+      } else {
+        this.$socket.emit("login", this.nick);
+      }
     }
   }
 };
