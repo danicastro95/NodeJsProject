@@ -7,6 +7,7 @@
       <router-view/>
     </div>
     <Login v-else @log="logged"></Login>
+    <notifications group="login"/>
     <footer id="foot">
       <Footer></Footer>
     </footer>
@@ -22,7 +23,7 @@ export default {
   data() {
     return {
       l: false,
-      nick: ''
+      nick: ""
     };
   },
   components: {
@@ -33,6 +34,10 @@ export default {
     logged(msg) {
       this.l = !this.l;
       this.nick = msg;
+      this.$notify({
+        group: "login",
+        title: "Conectado con éxito"
+      });
     }
   }
 };

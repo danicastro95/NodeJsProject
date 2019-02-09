@@ -44,12 +44,7 @@
                     src="@/assets/check.png"
                     @click="completeNote(note)"
                   >
-                  <img
-                    class="check"
-                    src="@/assets/uncheck.png"
-                    @click="completeNote(note)"
-                    v-else
-                  >
+                  <img class="check" src="@/assets/uncheck.png" @click="completeNote(note)" v-else>
                 </div>
                 <span
                   class="note align-top"
@@ -116,6 +111,7 @@
       </div>
       <div class="col"></div>
     </div>
+    <notifications group="not"/>
   </div>
 </template>
 
@@ -132,16 +128,26 @@ export default {
     // Nueva nota
     new(data) {
       this.notes.unshift(data);
+      this.$notify({
+        group: "not",
+        title: "Nota creada",
+        text: data.creator
+      });
     },
 
     // Nota eliminada
     del(data) {
       let i = 0;
       this.notes.forEach(n => {
-        if (data == n.noteId) {
+        if (data[0] == n.noteId) {
           this.notes.splice(i, 1);
         }
         i++;
+      });
+      this.$notify({
+        group: "not",
+        title: "Nota eliminada",
+        text: data[1]
       });
     },
 
@@ -169,6 +175,24 @@ export default {
     notes(data) {
       this.notes = data;
       this.sortNotes();
+    },
+
+    // Usuario desconectado
+    disc(data) {
+      this.$notify({
+        group: "not",
+        title: "Usuario desconectado",
+        text: data
+      });
+    },
+
+    // Usuario conectado
+    con(data) {
+      this.$notify({
+        group: "not",
+        title: "Usuario conectado",
+        text: data
+      });
     }
   },
   methods: {
@@ -198,6 +222,10 @@ export default {
       };
       this.notes.unshift(note);
       event.target.value = "";
+      this.$notify({
+        group: "not",
+        title: "Nota creada"
+      });
       this.$socket.emit("newNote", note);
     },
 
@@ -209,6 +237,10 @@ export default {
           this.notes.splice(i, 1);
         }
         i++;
+      });
+      this.$notify({
+        group: "not",
+        title: "Nota eliminada"
       });
       this.$socket.emit("delNote", id);
     },

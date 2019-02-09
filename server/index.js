@@ -11,14 +11,13 @@ var notes = new Array();
 
 io.on('connection', function (socket) {
     var nick;
-
     socket.on('disconnect', function () {
 
         // Elimina al usuario del array cuando se desconecta
         users.splice(users.indexOf(nick), 1);
 
         //Notificacion de abandono
-        socket.broadcast.emit('left', nick);
+        socket.broadcast.emit('disc', nick);
     });
 
 
@@ -40,7 +39,7 @@ io.on('connection', function (socket) {
             i++;
         });
         // Transmite el id de la nota eliminada
-        socket.broadcast.emit('del', data);
+        socket.broadcast.emit('del', [data, nick]);
     });
 
 
@@ -78,6 +77,7 @@ io.on('connection', function (socket) {
             socket.emit('log', true);
             // Transmite las notas almacenadas en el servidor
             socket.emit('notes', notes);
+            socket.broadcast.emit('con', nick);
         }
     });
 });
