@@ -2,7 +2,7 @@
   <div class="row">
     <div class="form-group col-4"></div>
     <div class="col">
-      <label for="loginInput">Introduce un apodo</label>
+      <label for="loginInput" class="text-white">Introduce un apodo</label>
       <input type="text" class="form-control" id="loginInput" v-model="nick">
       <button type="button" class="btn btn-primary" @click="log">Acceder</button>
     </div>
@@ -22,7 +22,7 @@ export default {
     log(data) {
       if (data) {
         this.$emit("log", this.nick);
-      } else if(!data) {
+      } else if (!data) {
         alert("Este nick está en uso actualmente, por favor elige otro");
       }
     }
