@@ -28,8 +28,7 @@ export default {
     }
   },
   methods: {
-    log: function(e) {
-      let exp = new RegExp("^$");
+    log: function() {
       if (/^$/.test(this.nick)) {
         alert("El campo no puede estar vacío");
       } else if (/\W/.test(this.nick)) {

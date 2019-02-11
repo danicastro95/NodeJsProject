@@ -6,19 +6,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import VueSocketIO from 'vue-socket.io';
 import Notifications from 'vue-notification';
-/* import vueFilePond from 'vue-filepond';
-import 'filepond/dist/filepond.min.css';
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
-import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-
-const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview); */
 
 Vue.use(BootstrapVue);
 Vue.use(Notifications);
 
 Vue.use(new VueSocketIO({
-  connection: 'localhost:3000'
+  /* connection: 'localhost:3000' */
+  connection: window.location.hostname
 }));
 
 const moment = require('moment')
